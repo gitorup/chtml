@@ -10,7 +10,7 @@ extern "C" {
 
 /* chtml type */
 #define chtml_object	1
-#define chtml_head		2
+#define chtml_label		2
 #define chtml_body		3
 
 typedef struct chtml {
@@ -18,12 +18,19 @@ typedef struct chtml {
 	struct chtml *child;
 
 	char *label;
+	char *text;
 	int type;
 } chtml_t;
 
 extern chtml_t *chtml_create(void);
+extern chtml_t *chtml_create_head(void);
+extern chtml_t *chtml_create_body(void);
 extern char *chtml_print(chtml_t *chtml);
 extern void chtml_delete(chtml_t *chtml);
+
+extern void chtml_append(chtml_t *chtml, chtml_t *node);
+extern void chtml_insert(chtml_t *chtml, chtml_t *node);
+extern chtml_t *chtml_insert_label(chtml_t *chtml, char *label, char *text);
 
 #ifdef __cplusplus
 }
