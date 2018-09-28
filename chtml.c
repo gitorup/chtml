@@ -7,15 +7,15 @@
 
 static chtml_t *chtml_create_object(char *label)
 {
-	chtml_t *node = (chtml_t *)malloc(sizeof(chtml_t));
+    chtml_t *node = (chtml_t *)malloc(sizeof(chtml_t));
 
-	if (node) {
-	    memset(node, 0, sizeof(chtml_t));
+    if (node) {
+        memset(node, 0, sizeof(chtml_t));
         node->type = chtml_object;
         if (label) node->label = strdup(label);
     }
 
-	return node;
+    return node;
 }
 
 chtml_t *chtml_create(void)
