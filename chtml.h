@@ -14,12 +14,12 @@ extern "C" {
 #define chtml_body		3
 
 typedef struct chtml {
-	struct chtml *prev, *next;
-	struct chtml *child;
+    struct chtml *prev, *next;
+    struct chtml *child;
 
-	char *label;
-	char *text;
-	int type;
+    char *label;
+    char *text;
+    int type;
 } chtml_t;
 
 extern chtml_t *chtml_create(void);
