@@ -28,6 +28,7 @@ typedef struct chtml {
 extern chtml_t *chtml_create(void);
 extern chtml_t *chtml_create_head(void);
 extern chtml_t *chtml_create_body(void);
+extern chtml_t *chtml_create_meta(char *attr);
 extern chtml_t *chtml_create_tag(char *label, char *text, char *attr);
 
 extern void chtml_delete(chtml_t *chtml);

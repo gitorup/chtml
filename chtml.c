@@ -5,32 +5,19 @@
 
 #include "chtml.h"
 
-static chtml_t *chtml_create_object(char *label)
+chtml_t *chtml_create_object(int type, char *label, char *text, char *attr)
 {
     chtml_t *node = (chtml_t *)malloc(sizeof(chtml_t));
 
     if (node) {
         memset(node, 0, sizeof(chtml_t));
-        node->type = chtml_object;
+        node->type = type;
         if (label) node->label = strdup(label);
+        if (text) node->text = strdup(text);
+        if (attr) node->attr = strdup(attr);
     }
 
     return node;
-}
-
-chtml_t *chtml_create(void)
-{
-    return chtml_create_object("html");
-}
-
-chtml_t *chtml_create_head(void)
-{
-    return chtml_create_object("head");
-}
-
-chtml_t *chtml_create_body(void)
-{
-    return chtml_create_object("body");
 }
 
 void chtml_append(chtml_t *chtml, chtml_t *node)
@@ -70,7 +57,46 @@ void chtml_delete(chtml_t *chtml)
     }
 }
 
-int chmtl_print_size(chtml_t *chtml)
+static int chtml_print_object_size(chtml_t *chtml)
+{
+    int chtml_size = 0;
+
+    if (chtml && chtml->label) {
+        chtml_size += 2 * strlen(chtml->label);
+        chtml_size += 5; /* <></> */
+    }
+
+    return chtml_size;
+}
+
+static int chtml_print_meta_size(chtml_t *chtml)
+{
+    int chtml_size = 0;
+
+    if (chtml && chtml->label) {
+        chtml_size += strlen(chtml->label);
+        chtml_size += 2; /* <> */
+    }
+    if (chtml && chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
+
+    return chtml_size;
+}
+
+static int chtml_print_tag_size(chtml_t *chtml)
+{
+    int chtml_size = 0;
+
+    if (chtml && chtml->label) {
+        chtml_size += 2 * strlen(chtml->label);
+        chtml_size += 5; /* <></> */
+    }
+    if (chtml && chtml->text) chtml_size += strlen(chtml->text);
+    if (chtml && chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
+
+    return chtml_size;
+}
+
+static int chmtl_print_size(chtml_t *chtml)
 {
     chtml_t *next;
     int chtml_size = 0;
@@ -79,22 +105,9 @@ int chmtl_print_size(chtml_t *chtml)
         next = chtml->next;
         if (chtml->child) chtml_size += chmtl_print_size(chtml->child);
         switch (chtml->type) {
-            case chtml_object: {
-                if (chtml->label) {
-                    chtml_size += 2 * strlen(chtml->label);
-                    chtml_size += 5; /* <></> */
-                }
-                break;
-            }
-
-            case chtml_tag:
-                if (chtml->label) {
-                    chtml_size += 2 * strlen(chtml->label);
-                    chtml_size += 5; /* <></> */
-                }
-                if (chtml->text) chtml_size += strlen(chtml->text);
-                if (chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
-                break;
+            case chtml_object:  chtml_size += chtml_print_object_size(chtml);   break;
+            case chtml_tag:     chtml_size += chtml_print_tag_size(chtml);      break;
+            case chtml_meta:    chtml_size += chtml_print_meta_size(chtml);     break;
         }
         chtml = next;
     }
@@ -103,9 +116,7 @@ int chmtl_print_size(chtml_t *chtml)
     return chtml_size;
 }
 
-
-
-int chtml_print_all(chtml_t *chtml, char *ptr, int size)
+static int chtml_print_all(chtml_t *chtml, char *ptr, int size)
 {
     chtml_t *next;
     int chtml_size = 0;
@@ -152,19 +163,13 @@ char *chtml_print(chtml_t *chtml)
     return out;
 }
 
-chtml_t *chtml_create_tag(char *label, char *text, char *attr)
-{
-	chtml_t *node = NULL;
+/* chtml object */
+chtml_t *chtml_create(void)         {return chtml_create_object(chtml_object, "html", NULL, NULL);}
+chtml_t *chtml_create_head(void)    {return chtml_create_object(chtml_object, "head", NULL, NULL);}
+chtml_t *chtml_create_body(void)    {return chtml_create_object(chtml_object, "body", NULL, NULL);}
 
-	node = (chtml_t *)malloc(sizeof(chtml_t));
-	if (node) {
-	    memset(node, 0, sizeof(chtml_t));
-        node->type = chtml_tag;
-        if (label) node->label = strdup(label);
-        if (text) node->text = strdup(text);
-        if (attr) node->attr = strdup(attr);
-    }
-
-    return node;
-}
+/* chtml meta */
+chtml_t *chtml_create_meta(char *attr)  {return chtml_create_object(chtml_meta, "meta", NULL, attr);}
+/* chtml tag */
+chtml_t *chtml_create_tag(char *label, char *text, char *attr)  {return chtml_create_object(chtml_tag, label, text, attr);}
 
