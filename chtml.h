@@ -10,7 +10,7 @@ extern "C" {
 
 /* chtml type */
 #define chtml_object	1
-#define chtml_label		2
+#define chtml_tag		2
 #define chtml_body		3
 
 typedef struct chtml {
@@ -30,7 +30,7 @@ extern void chtml_delete(chtml_t *chtml);
 
 extern void chtml_append(chtml_t *chtml, chtml_t *node);
 extern void chtml_insert(chtml_t *chtml, chtml_t *node);
-extern chtml_t *chtml_insert_label(chtml_t *chtml, char *label, char *text);
+extern chtml_t *chtml_insert_tag(chtml_t *chtml, char *label, char *text);
 
 #ifdef __cplusplus
 }

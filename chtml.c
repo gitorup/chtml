@@ -55,14 +55,14 @@ void chtml_insert(chtml_t *chtml, chtml_t *node)
     }
 }
 
-chtml_t *chtml_insert_label(chtml_t *chtml, char *label, char *text)
+chtml_t *chtml_insert_tag(chtml_t *chtml, char *label, char *text)
 {
 	chtml_t *node = NULL;
 
 	node = (chtml_t *)malloc(sizeof(chtml_t));
 	if (node) {
 	    memset(node, 0, sizeof(chtml_t));
-        node->type = chtml_label;
+        node->type = chtml_tag;
         if (label) node->label = strdup(label);
         if (text) node->text = strdup(text);
     }
@@ -102,7 +102,7 @@ int chmtl_print_size(chtml_t *chtml)
                 break;
             }
 
-            case chtml_label:
+            case chtml_tag:
                 if (chtml->label) {
                     chtml_size += 2 * strlen(chtml->label);
                     chtml_size += 5; /* <></> */
