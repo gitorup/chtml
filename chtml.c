@@ -55,22 +55,6 @@ void chtml_insert(chtml_t *chtml, chtml_t *node)
     }
 }
 
-chtml_t *chtml_insert_tag(chtml_t *chtml, char *label, char *text)
-{
-	chtml_t *node = NULL;
-
-	node = (chtml_t *)malloc(sizeof(chtml_t));
-	if (node) {
-	    memset(node, 0, sizeof(chtml_t));
-        node->type = chtml_tag;
-        if (label) node->label = strdup(label);
-        if (text) node->text = strdup(text);
-    }
-
-    if (chtml) chtml->child = node;
-	return node;
-}
-
 void chtml_delete(chtml_t *chtml)
 {
     chtml_t *next;
@@ -80,6 +64,7 @@ void chtml_delete(chtml_t *chtml)
         if (chtml->child) chtml_delete(chtml->child);
         if (chtml->label) { free(chtml->label); chtml->label = NULL; }
         if (chtml->text) { free(chtml->text); chtml->text = NULL; }
+        if (chtml->attr) { free(chtml->attr); chtml->attr = NULL; }
         free(chtml);
         chtml = next;
     }
@@ -108,6 +93,7 @@ int chmtl_print_size(chtml_t *chtml)
                     chtml_size += 5; /* <></> */
                 }
                 if (chtml->text) chtml_size += strlen(chtml->text);
+                if (chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
                 break;
         }
         chtml = next;
@@ -116,6 +102,8 @@ int chmtl_print_size(chtml_t *chtml)
     chtml_size += 1; /* '\0' */
     return chtml_size;
 }
+
+
 
 int chtml_print_all(chtml_t *chtml, char *ptr, int size)
 {
@@ -129,7 +117,11 @@ int chtml_print_all(chtml_t *chtml, char *ptr, int size)
 
     while (chtml) {
         next = chtml->next;
-        if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s>", chtml->label);
+        if (chtml->attr) {
+            if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s %s>", chtml->label, chtml->attr);
+        } else {
+            if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s>", chtml->label);
+        }
         if (chtml->text) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "%s", chtml->text);
         if (chtml->child) chtml_size += chtml_print_all(chtml->child, ptr + chtml_size, size - chtml_size);
         if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "</%s>", chtml->label);
@@ -158,5 +150,21 @@ char *chtml_print(chtml_t *chtml)
     out_size = chtml_print_all(chtml, out, chtml_size);
     out[out_size + 1] = '\0';
     return out;
+}
+
+chtml_t *chtml_create_tag(char *label, char *text, char *attr)
+{
+	chtml_t *node = NULL;
+
+	node = (chtml_t *)malloc(sizeof(chtml_t));
+	if (node) {
+	    memset(node, 0, sizeof(chtml_t));
+        node->type = chtml_tag;
+        if (label) node->label = strdup(label);
+        if (text) node->text = strdup(text);
+        if (attr) node->attr = strdup(attr);
+    }
+
+    return node;
 }
 
