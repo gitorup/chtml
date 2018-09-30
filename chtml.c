@@ -173,3 +173,30 @@ chtml_t *chtml_create_meta(char *attr)  {return chtml_create_object(chtml_meta, 
 /* chtml tag */
 chtml_t *chtml_create_tag(char *label, char *text, char *attr)  {return chtml_create_object(chtml_tag, label, text, attr);}
 
+/* utility to jump whitespace and cr/lf */
+static const char *chtml_skip(const char *in)
+{
+    while (in && *in && (unsigned char)*in <= 32) in++;
+    return in;
+}
+
+static chtml_t *chtml_parse_all(chtml_t *chtml, const char *data)
+{
+    return chtml;
+}
+
+chtml_t *chtml_parse(const char *data)
+{
+    chtml_t *chtml = NULL;
+
+    if (data) {
+        chtml = (chtml_t *)malloc(sizeof(chtml_t));
+        if (chtml == NULL)
+            return chtml;
+
+        return chtml_parse_all(chtml, chtml_skip(data));
+    }
+
+    return chtml;
+}
+

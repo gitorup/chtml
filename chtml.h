@@ -36,6 +36,8 @@ extern void chtml_append(chtml_t *chtml, chtml_t *node);
 extern void chtml_insert(chtml_t *chtml, chtml_t *node);
 extern char *chtml_print(chtml_t *chtml);
 
+extern chtml_t *chtml_parse(const char *data);
+
 #ifdef __cplusplus
 }
 #endif
