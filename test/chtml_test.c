@@ -37,6 +37,7 @@ void main_test1(int argc, char *argv[])
     }
 
     head = chtml_create_head();
+    chtml_insert(head, chtml_create_meta("charset=\"utf-8\""));
     chtml_insert(head, chtml_create_tag("title", "This is a test html!", NULL));
     chtml_insert(chtml, head);
 

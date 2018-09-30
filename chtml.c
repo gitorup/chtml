@@ -132,8 +132,9 @@ static int chtml_print_all(chtml_t *chtml, char *ptr, int size)
         }
         if (chtml->text) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "%s", chtml->text);
         if (chtml->child) chtml_size += chtml_print_all(chtml->child, ptr + chtml_size, size - chtml_size);
-        if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "</%s>", chtml->label);
-
+        if (chtml->type != chtml_meta) {
+            if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "</%s>", chtml->label);
+        }
         chtml = chtml->next;
     }
 
