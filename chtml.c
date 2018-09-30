@@ -200,3 +200,21 @@ chtml_t *chtml_parse(const char *data)
     return chtml;
 }
 
+chtml_t *chtml_get_tag(chtml_t *chtml, char *label)
+{
+    chtml_t *node = NULL;
+
+    while (chtml) {
+        if (strcasecmp(chtml->label, label) == 0)
+            return node;
+        if (chtml->child) {
+            node = chtml_get_tag(chtml->child, label);
+            if (node)
+                return node;
+        }
+        chtml = chtml->next;
+    }
+
+    return node;
+}
+
