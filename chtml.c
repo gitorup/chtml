@@ -98,18 +98,17 @@ static int chtml_print_tag_size(chtml_t *chtml)
 
 static int chmtl_print_size(chtml_t *chtml)
 {
-    chtml_t *next;
     int chtml_size = 0;
 
     while (chtml) {
-        next = chtml->next;
         if (chtml->child) chtml_size += chmtl_print_size(chtml->child);
         switch (chtml->type) {
             case chtml_object:  chtml_size += chtml_print_object_size(chtml);   break;
             case chtml_tag:     chtml_size += chtml_print_tag_size(chtml);      break;
             case chtml_meta:    chtml_size += chtml_print_meta_size(chtml);     break;
         }
-        chtml = next;
+
+        chtml = chtml->next;
     }
 
     chtml_size += 1; /* '\0' */
@@ -118,7 +117,6 @@ static int chmtl_print_size(chtml_t *chtml)
 
 static int chtml_print_all(chtml_t *chtml, char *ptr, int size)
 {
-    chtml_t *next;
     int chtml_size = 0;
 
     if (ptr == NULL || size <= 0) {
@@ -127,7 +125,6 @@ static int chtml_print_all(chtml_t *chtml, char *ptr, int size)
     }
 
     while (chtml) {
-        next = chtml->next;
         if (chtml->attr) {
             if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s %s>", chtml->label, chtml->attr);
         } else {
@@ -136,7 +133,8 @@ static int chtml_print_all(chtml_t *chtml, char *ptr, int size)
         if (chtml->text) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "%s", chtml->text);
         if (chtml->child) chtml_size += chtml_print_all(chtml->child, ptr + chtml_size, size - chtml_size);
         if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "</%s>", chtml->label);
-        chtml = next;
+
+        chtml = chtml->next;
     }
 
     return chtml_size;
