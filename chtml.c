@@ -59,63 +59,20 @@ void chtml_delete(chtml_t *chtml)
     }
 }
 
-static int chtml_print_object_size(chtml_t *chtml)
-{
-    int chtml_size = 0;
-
-    if (chtml && chtml->slabel) {
-        chtml_size += 2 + strlen(chtml->slabel); /* <> */
-    }
-
-    if (chtml && chtml->elabel) {   
-        chtml_size += 3 + strlen(chtml->elabel); /* </> */
-    }
-
-    return chtml_size;
-}
-
-static int chtml_print_meta_size(chtml_t *chtml)
-{
-    int chtml_size = 0;
-
-    if (chtml && chtml->slabel) {
-        chtml_size += 2 + strlen(chtml->slabel); /* <> */
-    }
-    if (chtml && chtml->elabel) {
-        chtml_size += 3 + strlen(chtml->elabel); /* </> */
-    }
-    if (chtml && chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
-
-    return chtml_size;
-}
-
-static int chtml_print_tag_size(chtml_t *chtml)
-{
-    int chtml_size = 0;
-
-    if (chtml && chtml->slabel) {
-        chtml_size += 2 + strlen(chtml->slabel); /* <> */
-    }
-    if (chtml && chtml->elabel) {
-        chtml_size += 3 + strlen(chtml->elabel); /* </> */
-    }
-    if (chtml && chtml->text) chtml_size += strlen(chtml->text);
-    if (chtml && chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
-
-    return chtml_size;
-}
-
 static int chmtl_print_size(chtml_t *chtml)
 {
     int chtml_size = 0;
 
     while (chtml) {
         if (chtml->child) chtml_size += chmtl_print_size(chtml->child);
-        switch (chtml->type) {
-            case chtml_object:  chtml_size += chtml_print_object_size(chtml);   break;
-            case chtml_tag:     chtml_size += chtml_print_tag_size(chtml);      break;
-            case chtml_meta:    chtml_size += chtml_print_meta_size(chtml);     break;
+        if (chtml && chtml->slabel) {
+            chtml_size += 2 + strlen(chtml->slabel); /* <> */
         }
+        if (chtml && chtml->elabel) {
+            chtml_size += 3 + strlen(chtml->elabel); /* </> */
+        }
+        if (chtml && chtml->text) chtml_size += strlen(chtml->text);
+        if (chtml && chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
 
         chtml = chtml->next;
     }
