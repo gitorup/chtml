@@ -20,7 +20,8 @@ typedef struct chtml {
     /* chtml type */
     int type;
 
-    char *label;
+    char *slabel;
+    char *elabel;
     char *text;
     char *attr;
 } chtml_t;
@@ -29,7 +30,7 @@ extern chtml_t *chtml_create(void);
 extern chtml_t *chtml_create_head(void);
 extern chtml_t *chtml_create_body(void);
 extern chtml_t *chtml_create_meta(char *attr);
-extern chtml_t *chtml_create_tag(char *label, char *text, char *attr);
+extern chtml_t *chtml_create_tag(char *slabel, char *elabel, char *text, char *attr);
 
 extern void chtml_delete(chtml_t *chtml);
 extern void chtml_append(chtml_t *chtml, chtml_t *node);

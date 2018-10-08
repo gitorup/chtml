@@ -5,14 +5,15 @@
 
 #include "chtml.h"
 
-chtml_t *chtml_create_object(int type, char *label, char *text, char *attr)
+chtml_t *chtml_create_object(int type, char *slabel, char *elabel, char *text, char *attr)
 {
     chtml_t *node = (chtml_t *)malloc(sizeof(chtml_t));
 
     if (node) {
         memset(node, 0, sizeof(chtml_t));
         node->type = type;
-        if (label) node->label = strdup(label);
+        if (slabel) node->slabel = strdup(slabel);
+        if (elabel) node->elabel = strdup(elabel);
         if (text) node->text = strdup(text);
         if (attr) node->attr = strdup(attr);
     }
@@ -49,7 +50,8 @@ void chtml_delete(chtml_t *chtml)
     while (chtml) {
         next = chtml->next;
         if (chtml->child) chtml_delete(chtml->child);
-        if (chtml->label) { free(chtml->label); chtml->label = NULL; }
+        if (chtml->slabel) { free(chtml->slabel); chtml->slabel = NULL; }
+        if (chtml->elabel) { free(chtml->elabel); chtml->elabel = NULL; }
         if (chtml->text) { free(chtml->text); chtml->text = NULL; }
         if (chtml->attr) { free(chtml->attr); chtml->attr = NULL; }
         free(chtml);
@@ -61,9 +63,12 @@ static int chtml_print_object_size(chtml_t *chtml)
 {
     int chtml_size = 0;
 
-    if (chtml && chtml->label) {
-        chtml_size += 2 * strlen(chtml->label);
-        chtml_size += 5; /* <></> */
+    if (chtml && chtml->slabel) {
+        chtml_size += 2 + strlen(chtml->slabel); /* <> */
+    }
+
+    if (chtml && chtml->elabel) {   
+        chtml_size += 3 + strlen(chtml->elabel); /* </> */
     }
 
     return chtml_size;
@@ -73,9 +78,11 @@ static int chtml_print_meta_size(chtml_t *chtml)
 {
     int chtml_size = 0;
 
-    if (chtml && chtml->label) {
-        chtml_size += strlen(chtml->label);
-        chtml_size += 2; /* <> */
+    if (chtml && chtml->slabel) {
+        chtml_size += 2 + strlen(chtml->slabel); /* <> */
+    }
+    if (chtml && chtml->elabel) {
+        chtml_size += 3 + strlen(chtml->elabel); /* </> */
     }
     if (chtml && chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
 
@@ -86,9 +93,11 @@ static int chtml_print_tag_size(chtml_t *chtml)
 {
     int chtml_size = 0;
 
-    if (chtml && chtml->label) {
-        chtml_size += 2 * strlen(chtml->label);
-        chtml_size += 5; /* <></> */
+    if (chtml && chtml->slabel) {
+        chtml_size += 2 + strlen(chtml->slabel); /* <> */
+    }
+    if (chtml && chtml->elabel) {
+        chtml_size += 3 + strlen(chtml->elabel); /* </> */
     }
     if (chtml && chtml->text) chtml_size += strlen(chtml->text);
     if (chtml && chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
@@ -126,15 +135,13 @@ static int chtml_print_all(chtml_t *chtml, char *ptr, int size)
 
     while (chtml) {
         if (chtml->attr) {
-            if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s %s>", chtml->label, chtml->attr);
+            if (chtml->slabel) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s %s>", chtml->slabel, chtml->attr);
         } else {
-            if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s>", chtml->label);
+            if (chtml->slabel) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s>", chtml->slabel);
         }
         if (chtml->text) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "%s", chtml->text);
         if (chtml->child) chtml_size += chtml_print_all(chtml->child, ptr + chtml_size, size - chtml_size);
-        if (chtml->type != chtml_meta) {
-            if (chtml->label) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "</%s>", chtml->label);
-        }
+        if (chtml->elabel) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "</%s>", chtml->elabel);
         chtml = chtml->next;
     }
 
@@ -163,14 +170,14 @@ char *chtml_print(chtml_t *chtml)
 }
 
 /* chtml object */
-chtml_t *chtml_create(void)         {return chtml_create_object(chtml_object, "html", NULL, NULL);}
-chtml_t *chtml_create_head(void)    {return chtml_create_object(chtml_object, "head", NULL, NULL);}
-chtml_t *chtml_create_body(void)    {return chtml_create_object(chtml_object, "body", NULL, NULL);}
+chtml_t *chtml_create(void)         {return chtml_create_object(chtml_object, "html", "html", NULL, NULL);}
+chtml_t *chtml_create_head(void)    {return chtml_create_object(chtml_object, "head", "head", NULL, NULL);}
+chtml_t *chtml_create_body(void)    {return chtml_create_object(chtml_object, "body", "body", NULL, NULL);}
 
 /* chtml meta */
-chtml_t *chtml_create_meta(char *attr)  {return chtml_create_object(chtml_meta, "meta", NULL, attr);}
+chtml_t *chtml_create_meta(char *attr)  {return chtml_create_object(chtml_meta, "meta", NULL, NULL, attr);}
 /* chtml tag */
-chtml_t *chtml_create_tag(char *label, char *text, char *attr)  {return chtml_create_object(chtml_tag, label, text, attr);}
+chtml_t *chtml_create_tag(char *slabel, char *elabel, char *text, char *attr)  {return chtml_create_object(chtml_tag, slabel, elabel, text, attr);}
 
 /* utility to jump whitespace and cr/lf */
 static const char *chtml_skip(const char *in)
@@ -204,7 +211,7 @@ chtml_t *chtml_get_tag(chtml_t *chtml, char *label)
     chtml_t *node = NULL;
 
     while (chtml) {
-        if (strcasecmp(chtml->label, label) == 0)
+        if (strcasecmp(chtml->slabel, label) == 0)
             return node;
         if (chtml->child) {
             node = chtml_get_tag(chtml->child, label);
