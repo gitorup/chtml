@@ -38,11 +38,18 @@ void main_test1(int argc, char *argv[])
 
     head = chtml_create_head();
     chtml_insert(head, chtml_create_meta("charset=\"utf-8\""));
-    chtml_insert(head, chtml_create_tag("title", "title", "This is a test html!", NULL));
+    chtml_insert(head, chtml_create_tag("title", "title", "Welcome to OpenResty!", NULL));
+    chtml_insert(head, chtml_create_tag("style", "style", "body {"
+        "width: 35em;margin: 0 auto;font-family: Tahoma, Verdana, Arial, sans-serif;}", NULL));
     chtml_insert(chtml, head);
 
     body = chtml_create_body();
-    chtml_insert(body, chtml_create_tag("h1", "h1", "List of ./load", NULL));
+    chtml_insert(body, chtml_create_tag("h1", "h1", "Welcome to OpenResty!", NULL));
+    chtml_insert(body, chtml_create_tag("p", "p", "If you see this page, "
+            "the OpenResty web platform is successfully installed and working. "
+            "Further configuration is required.", NULL));
+    chtml_insert(body, chtml_create_tag("p", "p", "For online documentation and support please refer to openresty.org", NULL));
+    chtml_insert(body, chtml_create_tag("p", "p", "Thank you for flying OpenResty.", NULL));
     chtml_insert(chtml, body);
 
     out = chtml_print(chtml);
