@@ -64,7 +64,7 @@ static int chmtl_print_size(chtml_t *chtml)
     int chtml_size = 0;
 
     while (chtml) {
-        if (chtml->child) chtml_size += chmtl_print_size(chtml->child);
+        if (chtml->child) { chtml_size += 2; chtml_size += chmtl_print_size(chtml->child); }
         if (chtml && chtml->slabel) {
             chtml_size += 2 + strlen(chtml->slabel); /* <> */
         }
@@ -73,7 +73,7 @@ static int chmtl_print_size(chtml_t *chtml)
         }
         if (chtml && chtml->text) chtml_size += strlen(chtml->text);
         if (chtml && chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
-
+        if (chtml->next) chtml_size += 1; /* \n */
         chtml = chtml->next;
     }
 
@@ -97,8 +97,13 @@ static int chtml_print_all(chtml_t *chtml, char *ptr, int size)
             if (chtml->slabel) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s>", chtml->slabel);
         }
         if (chtml->text) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "%s", chtml->text);
-        if (chtml->child) chtml_size += chtml_print_all(chtml->child, ptr + chtml_size, size - chtml_size);
+        if (chtml->child) {
+            chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "\n");
+            chtml_size += chtml_print_all(chtml->child, ptr + chtml_size, size - chtml_size);
+            chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "\n");
+        }
         if (chtml->elabel) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "</%s>", chtml->elabel);
+        if (chtml->next) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "\n");
         chtml = chtml->next;
     }
 
