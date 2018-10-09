@@ -39,8 +39,8 @@ void main_test1(int argc, char *argv[])
     head = chtml_create_head();
     chtml_insert(head, chtml_create_meta("charset=\"utf-8\""));
     chtml_insert(head, chtml_create_tag("title", "title", "Welcome to OpenResty!", NULL));
-    chtml_insert(head, chtml_create_tag("style", "style", "body {"
-        "width: 35em;margin: 0 auto;font-family: Tahoma, Verdana, Arial, sans-serif;}", NULL));
+    chtml_insert(head, chtml_create_tag("style", "style", "\n\tbody {\n\t\t"
+        "width: 35em;\n\t\tmargin: 0 auto;\n\t\tfont-family: Tahoma, Verdana, Arial, sans-serif;\n\t}\n", NULL));
     chtml_insert(chtml, head);
 
     body = chtml_create_body();
