@@ -5,6 +5,8 @@
 
 #include "chtml.h"
 
+#define CHTML_FORMAT_DECLARATION   "<!DOCTYPE html>"
+
 chtml_t *chtml_create_object(int type, char *slabel, char *elabel, char *text, char *attr)
 {
     chtml_t *node = (chtml_t *)malloc(sizeof(chtml_t));
@@ -116,17 +118,26 @@ char *chtml_print(chtml_t *chtml)
     int chtml_size = 0;
     int out_size = 0;
 
+    /* calculate html object size */
     chtml_size = chmtl_print_size(chtml);
     if (chtml_size <= 0) {
         chtml_log("chtml_print data is NULL\n");
         return NULL;
     }
 
+    /* add format declaration */
+    chtml_size += strlen(CHTML_FORMAT_DECLARATION) + 1;
+
     out = (char *)malloc(chtml_size);
     memset(out, 0, chtml_size);
     chtml_log("chtml print size: %d\n", chtml_size);
 
-    out_size = chtml_print_all(chtml, out, chtml_size);
+    /* add format declaration */
+    out_size += snprintf(out + out_size, chtml_size - out_size, "%s", CHTML_FORMAT_DECLARATION);
+    out_size += snprintf(out + out_size, chtml_size - out_size, "\n");
+
+    /* print html object */
+    out_size += chtml_print_all(chtml, out + out_size, chtml_size);
     out[out_size + 1] = '\0';
     return out;
 }
