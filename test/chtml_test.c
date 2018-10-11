@@ -44,6 +44,7 @@ void main_test1(int argc, char *argv[])
     chtml_insert(chtml, head);
 
     body = chtml_create_body();
+    chtml_insert(body, chtml_create_note("This is a test html!"));
     chtml_insert(body, chtml_create_tag("h1", "h1", "Welcome to OpenResty!", NULL));
     chtml_insert(body, chtml_create_tag("p", "p", "If you see this page, "
             "the OpenResty web platform is successfully installed and working. "

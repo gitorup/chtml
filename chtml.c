@@ -73,6 +73,7 @@ static int chmtl_print_size(chtml_t *chtml)
         if (chtml && chtml->elabel) {
             chtml_size += 3 + strlen(chtml->elabel); /* </> */
         }
+        if (chtml && chtml->type == chtml_note) chtml_size += 9; /* <!-- xxx --> */
         if (chtml && chtml->text) chtml_size += strlen(chtml->text);
         if (chtml && chtml->attr) chtml_size += (strlen(chtml->attr) + 1); /* one space */
         if (chtml->next) chtml_size += 1; /* \n */
@@ -98,7 +99,9 @@ static int chtml_print_all(chtml_t *chtml, char *ptr, int size)
         } else {
             if (chtml->slabel) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<%s>", chtml->slabel);
         }
+        if (chtml->type == chtml_note) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "<!-- ");
         if (chtml->text) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "%s", chtml->text);
+        if (chtml->type == chtml_note) chtml_size += snprintf(ptr + chtml_size, size - chtml_size, " -->");
         if (chtml->child) {
             chtml_size += snprintf(ptr + chtml_size, size - chtml_size, "\n");
             chtml_size += chtml_print_all(chtml->child, ptr + chtml_size, size - chtml_size);
@@ -151,6 +154,9 @@ chtml_t *chtml_create_body(void)    {return chtml_create_object(chtml_object, "b
 chtml_t *chtml_create_meta(char *attr)  {return chtml_create_object(chtml_meta, "meta", NULL, NULL, attr);}
 /* chtml tag */
 chtml_t *chtml_create_tag(char *slabel, char *elabel, char *text, char *attr)  {return chtml_create_object(chtml_tag, slabel, elabel, text, attr);}
+
+/* chtml note */
+chtml_t *chtml_create_note(char *text) {return chtml_create_object(chtml_note, NULL, NULL, text, NULL);}
 
 /* utility to jump whitespace and cr/lf */
 static const char *chtml_skip(const char *in)

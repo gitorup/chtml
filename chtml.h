@@ -12,6 +12,7 @@ extern "C" {
 #define chtml_object	1
 #define chtml_tag		2
 #define chtml_meta		3
+#define chtml_note      4
 
 typedef struct chtml {
     struct chtml *prev, *next;
@@ -31,6 +32,7 @@ extern chtml_t *chtml_create_head(void);
 extern chtml_t *chtml_create_body(void);
 extern chtml_t *chtml_create_meta(char *attr);
 extern chtml_t *chtml_create_tag(char *slabel, char *elabel, char *text, char *attr);
+extern chtml_t *chtml_create_note(char *text);
 
 extern void chtml_delete(chtml_t *chtml);
 extern void chtml_append(chtml_t *chtml, chtml_t *node);
